@@ -259,11 +259,7 @@ This project provides a **real-time, AI-powered defense layer** directly inside 
 
 ## 👨‍💻 Team
 
-**Dadasaheb Dhakane**
-**Varad Todkar**
-**Kshitij Patil**
-**Paras Sharma**
-**Arpita Sarode**
+**Dadasaheb Dhakane** | **Varad Todkar** | **Kshitij Patil** | **Paras Sharma** | **Arpita Sarode**
 
 ---
 
