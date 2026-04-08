@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Sentinel | AI Text Analysis</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --bg: #F3F4F6;
+            --card: #FFFFFF;
+            --text: #1F2937;
+            --text-muted: #6B7280;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            background: var(--card);
+            width: 100%;
+            max-width: 650px;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #EEF2FF;
+            transition: all 0.2s;
+        }
+
+        .admin-link:hover {
+            background: #E0E7FF;
+        }
+
+        p.subtitle {
+            margin: 0 0 24px 0;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+        }
+
+        /* Result Box Styling */
+        #result-box {
+            margin-top: 24px;
+            border-radius: 12px;
+            padding: 20px;
+            display: none;
+            border-left: 6px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .is-spam {
+            background: var(--danger-light);
+            border-left-color: var(--danger);
+        }
+
+        .is-safe {
+            background: var(--success-light);
+            border-left-color: var(--success);
+        }
+
+        #result-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .is-spam #result-title {
+            color: #B91C1C;
+        }
+
+        .is-safe #result-title {
+            color: #047857;
+        }
+
+        /* Confidence Bar */
+        .confidence-wrapper {
+            margin-top: 12px;
+        }
+
+        .confidence-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .progress-bg {
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .is-spam .progress-fill {
+            background: var(--danger);
+        }
+
+        .is-safe .progress-fill {
+            background: var(--success);
+        }
+
+        /* Active Learning Feedback */
+        #feedback-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #E5E7EB;
+            display: none;
+        }
+
+        .feedback-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: var(--text);
+            border: 1px solid #D1D5DB;
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>🛡️ Spam Sentinel</h1>
+            <a href="admin.html" class="admin-link">Analytics Dashboard &rarr;</a>
+        </div>
+        <p class="subtitle">Paste email content below to analyze it against our live ML model.</p>
+
+        <textarea id="emailText" placeholder="Paste the suspicious text here..."></textarea>
+        <button id="scanBtn" onclick="analyzeText()">Analyze Content</button>
+
+        <div id="result-box">
+            <span id="result-title"></span>
+            <div class="confidence-wrapper">
+                <div class="confidence-label">
+                    <span>Model Confidence</span>
+                    <span id="confidence-score">0%</span>
+                </div>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div id="feedback-section">
+                <p class="feedback-text">Did the model make a mistake?</p>
+                <button id="feedbackBtn" class="btn-secondary" onclick="sendFeedback()">Report Incorrect
+                    Prediction</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentText = "";
+        let currentPrediction = "";
+
+        // Listen for the "Enter" key inside the text box
+        document.getElementById("emailText").addEventListener("keydown", function(event) {
+            // If they press Enter (but NOT Shift+Enter)
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault(); // Stop it from creating a new line
+                analyzeText(); // Trigger the scan function
+            }
+        });
+
+        async function analyzeText() {
+            const textArea = document.getElementById("emailText");
+            const btn = document.getElementById("scanBtn");
+            const resultBox = document.getElementById("result-box");
+            const feedbackSection = document.getElementById("feedback-section");
+
+            currentText = textArea.value.trim();
+            if (!currentText) return;
+
+            btn.innerText = "Analyzing..."; btn.disabled = true;
+            resultBox.style.display = "none"; feedbackSection.style.display = "none";
+            document.getElementById("progress-fill").style.width = "0%";
+
+            try {
+                const response = await fetch("http://localhost:8000/predict", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: currentText })
+                });
+                const data = await response.json();
+
+                resultBox.className = data.is_spam ? "is-spam" : "is-safe";
+                document.getElementById("result-title").innerText = data.is_spam ? "🚨 Malicious Content Detected" : "✅ Safe Content";
+                document.getElementById("confidence-score").innerText = `${data.confidence}%`;
+
+                resultBox.style.display = "block";
+
+                // Animate progress bar
+                setTimeout(() => {
+                    document.getElementById("progress-fill").style.width = `${data.confidence}%`;
+                }, 50);
+
+                currentPrediction = data.is_spam ? "spam" : "safe";
+
+                // Reset and show feedback
+                const fBtn = document.getElementById("feedbackBtn");
+                fBtn.innerText = "Report Incorrect Prediction";
+                fBtn.className = "btn-secondary";
+                fBtn.disabled = false;
+                feedbackSection.style.display = "block";
+
+            } catch (error) {
+                alert("Error connecting to server. Is FastAPI running on port 8000?");
+            } finally {
+                btn.innerText = "Analyze Content"; btn.disabled = false;
+            }
+        }
+
+        async function sendFeedback() {
+            const btn = document.getElementById("feedbackBtn");
+            btn.innerText = "Submitting..."; btn.disabled = true;
+            const correctLabel = currentPrediction === "spam" ? "safe" : "spam";
+
+            try {
+                await fetch("http://localhost:8000/feedback", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: currentText, predicted_label: currentPrediction, correct_label: correctLabel })
+                });
+                btn.innerText = "✅ Logged for next Model Retraining";
+                btn.style.background = "#10B981"; btn.style.color = "white"; btn.style.borderColor = "#10B981";
+            } catch (error) {
+                btn.innerText = "Error submitting feedback";
+            }
+        }
+    </script>
+</body>
+
+</html>

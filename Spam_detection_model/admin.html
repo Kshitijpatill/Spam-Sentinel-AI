@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Security Operations</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #F9FAFB;
+            --card: #FFFFFF;
+            --text: #1F2937;
+            --text-muted: #6B7280;
+            --primary: #4F46E5;
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #F3F4F6;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 16px;
+            border-bottom: 1px solid #E5E7EB;
+            font-size: 14px;
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-top: 0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .text-snippet {
+            color: var(--text-muted);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 Threat Analytics</h1>
+            <a href="index.html" class="back-link">&larr; Back to Scanner</a>
+        </div>
+
+        <div class="grid-4">
+            <div class="card">
+                <div class="stat-title">Total Scans</div>
+                <div class="stat-value" id="s-total">-</div>
+            </div>
+            <div class="card">
+                <div class="stat-title" style="color: var(--danger);">Threats Blocked</div>
+                <div class="stat-value" id="s-spam">-</div>
+            </div>
+            <div class="card">
+                <div class="stat-title" style="color: var(--success);">Safe Traffic</div>
+                <div class="stat-value" id="s-safe">-</div>
+            </div>
+            <div class="card">
+                <div class="stat-title" style="color: var(--warning);">Pending Retraining Data</div>
+                <div class="stat-value" id="s-pending">-</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3 style="margin-top: 0; margin-bottom: 20px;">Traffic Distribution</h3>
+                <div class="chart-container"><canvas id="trafficChart"></canvas></div>
+            </div>
+            <div class="card" style="overflow-x: auto;">
+                <h3 style="margin-top: 0;">Recent Threats Blocked</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Confidence</th>
+                            <th>Payload Snippet</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr>
+                            <td colspan="4" style="text-align:center; color: #9CA3AF;">Loading metrics...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let myChart;
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('http://localhost:8000/stats');
+                const data = await response.json();
+
+                document.getElementById('s-total').innerText = data.total_scans;
+                document.getElementById('s-spam').innerText = data.spam_blocked;
+                document.getElementById('s-safe').innerText = data.safe_messages;
+                document.getElementById('s-pending').innerText = data.pending_corrections;
+
+                updateChart(data.safe_messages, data.spam_blocked);
+
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = '';
+                if (data.recent_threats.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: #9CA3AF;">No threats recorded yet.</td></tr>';
+                } else {
+                    data.recent_threats.forEach(log => {
+                        const date = new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        tbody.innerHTML += `
+                        <tr>
+                            <td style="color: #6B7280; font-weight: 500;">${date}</td>
+                            <td><span class="badge">MALICIOUS</span></td>
+                            <td style="font-weight: 600;">${log.confidence}%</td>
+                            <td class="text-snippet">"${log.text_snippet}"</td>
+                        </tr>
+                    `;
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function updateChart(safe, spam) {
+            const ctx = document.getElementById('trafficChart').getContext('2d');
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: ['Safe', 'Spam'], datasets: [{ data: [safe, spam], backgroundColor: ['#10B981', '#EF4444'], borderWidth: 0, cutout: '75%' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        fetchStats();
+        // Only updates every 15 seconds to avoid terminal spam
+        setInterval(fetchStats, 15000); 
+    </script>
+</body>
+
+</html>
