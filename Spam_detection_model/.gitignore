@@ -1,4 +1,17 @@
+# Environments
+venv/
+env/
 .env
-env
-venv
-/.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Live Databases (Don't upload live user data to GitHub!)
+scan_logs.csv
+# retraining_data.csv
+
+# OS Files
+.DS_Store
+Thumbs.db

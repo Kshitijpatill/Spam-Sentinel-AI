@@ -4,68 +4,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spam Sentinel | AI Text Analysis</title>
+    <link rel="icon" type="image/x-icon" href="../Spam_detection_X10/icon.png">
+    <title>Spam Sentinel | AI Threat Scanner</title>
     <style>
         :root {
             --primary: #4F46E5;
             --primary-hover: #4338CA;
+            --primary-light: #EEF2FF;
             --danger: #EF4444;
-            --danger-light: #FEE2E2;
+            --danger-light: #FEF2F2;
+            --danger-mid: #FECACA;
             --success: #10B981;
-            --success-light: #D1FAE5;
-            --bg: #F3F4F6;
+            --success-light: #F0FDF4;
+            --warning: #F59E0B;
+            --warning-light: #FFFBEB;
+            --bg: #F1F5F9;
             --card: #FFFFFF;
-            --text: #1F2937;
-            --text-muted: #6B7280;
+            --text: #0F172A;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
             color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
         }
 
-        .app-container {
-            background: var(--card);
+        /* ── HEADER ── */
+        .page-header {
             width: 100%;
-            max-width: 650px;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .header {
+            max-width: 720px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
         }
 
-        h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text);
+        .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-text p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 1px;
         }
 
         .admin-link {
             color: var(--primary);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 8px;
-            background: #EEF2FF;
+            background: var(--primary-light);
+            border: 1px solid #C7D2FE;
             transition: all 0.2s;
         }
 
@@ -73,67 +97,116 @@
             background: #E0E7FF;
         }
 
-        p.subtitle {
-            margin: 0 0 24px 0;
+        /* ── MAIN CARD ── */
+        .card {
+            background: var(--card);
+            width: 100%;
+            max-width: 720px;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+        }
+
+        .card-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
             color: var(--text-muted);
-            font-size: 15px;
+            margin-bottom: 10px;
         }
 
         textarea {
             width: 100%;
-            height: 160px;
+            height: 180px;
             padding: 16px;
-            border: 2px solid #E5E7EB;
+            border: 2px solid var(--border);
             border-radius: 12px;
             font-size: 15px;
             font-family: inherit;
             resize: vertical;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-            margin-bottom: 20px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: var(--text);
+            background: #FAFAFA;
+            line-height: 1.6;
         }
 
         textarea:focus {
             outline: none;
             border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
         }
 
-        button {
-            width: 100%;
-            padding: 16px;
+        textarea::placeholder {
+            color: #94A3B8;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 14px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
         }
 
-        button:hover {
+        .btn-primary:hover:not(:disabled) {
             background: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
-        button:disabled {
-            background: #9CA3AF;
+        .btn-primary:disabled {
+            background: #94A3B8;
             cursor: not-allowed;
+            transform: none;
         }
 
-        /* Result Box Styling */
-        #result-box {
-            margin-top: 24px;
+        .btn-clear {
+            padding: 14px 18px;
+            background: #F1F5F9;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 20px;
-            display: none;
-            border-left: 6px solid transparent;
-            animation: slideDown 0.3s ease-out;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        @keyframes slideDown {
+        .btn-clear:hover {
+            background: #E2E8F0;
+            color: var(--text);
+        }
+
+        /* ── RESULT AREA ── */
+        #result-area {
+            margin-top: 24px;
+            display: none;
+        }
+
+        .result-card {
+            border-radius: 14px;
+            padding: 24px;
+            border: 1px solid transparent;
+            animation: fadeSlideIn 0.3s ease-out;
+        }
+
+        @keyframes fadeSlideIn {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(-8px);
             }
 
             to {
@@ -142,200 +215,536 @@
             }
         }
 
-        .is-spam {
+        .result-spam {
             background: var(--danger-light);
-            border-left-color: var(--danger);
+            border-color: #FECACA;
         }
 
-        .is-safe {
+        .result-safe {
             background: var(--success-light);
-            border-left-color: var(--success);
+            border-color: #BBF7D0;
         }
 
-        #result-title {
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .result-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .result-spam .result-icon {
+            background: #FEE2E2;
+        }
+
+        .result-safe .result-icon {
+            background: #D1FAE5;
+        }
+
+        .result-title {
             font-size: 18px;
             font-weight: 700;
-            margin-bottom: 8px;
-            display: block;
         }
 
-        .is-spam #result-title {
+        .result-spam .result-title {
             color: #B91C1C;
         }
 
-        .is-safe #result-title {
-            color: #047857;
+        .result-safe .result-title {
+            color: #065F46;
         }
 
-        /* Confidence Bar */
-        .confidence-wrapper {
-            margin-top: 12px;
+        .result-subtitle {
+            font-size: 14px;
+            margin-top: 2px;
         }
 
-        .confidence-label {
+        .result-spam .result-subtitle {
+            color: #DC2626;
+        }
+
+        .result-safe .result-subtitle {
+            color: #059669;
+        }
+
+        /* Confidence bar */
+        .confidence-section {
+            margin-bottom: 18px;
+        }
+
+        .conf-label {
+            display: flex;
+            justify-content: space-between;
             font-size: 13px;
             font-weight: 600;
             color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
             margin-bottom: 6px;
         }
 
-        .progress-bg {
+        .conf-value {
+            font-weight: 700;
+        }
+
+        .result-spam .conf-value {
+            color: var(--danger);
+        }
+
+        .result-safe .conf-value {
+            color: var(--success);
+        }
+
+        .conf-bar {
             height: 8px;
-            background: #E5E7EB;
-            border-radius: 4px;
+            background: #E2E8F0;
+            border-radius: 99px;
             overflow: hidden;
         }
 
-        .progress-fill {
+        .conf-fill {
             height: 100%;
-            border-radius: 4px;
+            border-radius: 99px;
             width: 0%;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .is-spam .progress-fill {
-            background: var(--danger);
+        .result-spam .conf-fill {
+            background: linear-gradient(90deg, #F87171, #EF4444);
         }
 
-        .is-safe .progress-fill {
-            background: var(--success);
+        .result-safe .conf-fill {
+            background: linear-gradient(90deg, #34D399, #10B981);
         }
 
-        /* Active Learning Feedback */
+        /* ── XAI WORDS ── */
+        #xai-section {
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid #FECACA;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .xai-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #DC2626;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .word-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .word-chip {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: ui-monospace, monospace;
+        }
+
+        /* ── URL RESULTS ── */
+        #url-section {
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .url-safe {
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            color: #065F46;
+        }
+
+        .url-danger {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+        }
+
+        .url-title {
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 8px;
+        }
+
+        .url-item {
+            font-family: ui-monospace, monospace;
+            font-size: 12px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .url-item:last-child {
+            border-bottom: none;
+        }
+
+        .url-reason {
+            background: #FEE2E2;
+            color: #991B1B;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ── FEEDBACK ── */
         #feedback-section {
-            margin-top: 20px;
             padding-top: 16px;
-            border-top: 1px solid #E5E7EB;
-            display: none;
+            border-top: 1px solid rgba(0, 0, 0, 0.07);
         }
 
-        .feedback-text {
-            font-size: 14px;
+        .feedback-label {
+            font-size: 13px;
             color: var(--text-muted);
-            margin: 0 0 10px 0;
+            margin-bottom: 10px;
             font-weight: 500;
         }
 
-        .btn-secondary {
-            background: #F3F4F6;
+        .btn-feedback {
+            padding: 10px 18px;
+            background: #F8FAFC;
             color: var(--text);
-            border: 1px solid #D1D5DB;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .btn-secondary:hover {
-            background: #E5E7EB;
+        .btn-feedback:hover:not(:disabled) {
+            background: #F1F5F9;
+        }
+
+        .btn-feedback:disabled {
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        .btn-feedback.success {
+            background: #D1FAE5;
+            color: #065F46;
+            border-color: #A7F3D0;
+        }
+
+        /* ── HOW IT WORKS ── */
+        .how-it-works {
+            width: 100%;
+            max-width: 720px;
+            margin-top: 28px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .step-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .step-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .step-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .how-it-works {
+                grid-template-columns: 1fr;
+            }
+
+            .action-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="app-container">
-        <div class="header">
-            <h1>🛡️ Spam Sentinel</h1>
-            <a href="admin.html" class="admin-link">Analytics Dashboard &rarr;</a>
+    <div class="page-header">
+        <div class="brand">
+            <div class="brand-icon">🛡️</div>
+            <div class="brand-text">
+                <h1>Spam Sentinel</h1>
+                <p>AI-Powered Threat Detection</p>
+            </div>
         </div>
-        <p class="subtitle">Paste email content below to analyze it against our live ML model.</p>
+        <a href="admin.html" class="admin-link">📊 Analytics →</a>
+    </div>
 
-        <textarea id="emailText" placeholder="Paste the suspicious text here..."></textarea>
-        <button id="scanBtn" onclick="analyzeText()">Analyze Content</button>
+    <div class="card">
+        <div class="card-label">Paste message or email content</div>
+        <textarea id="emailText"
+            placeholder="Paste suspicious email text here to analyze it against the live ML model..."></textarea>
 
-        <div id="result-box">
-            <span id="result-title"></span>
-            <div class="confidence-wrapper">
-                <div class="confidence-label">
-                    <span>Model Confidence</span>
-                    <span id="confidence-score">0%</span>
+        <div class="action-row">
+            <button class="btn-primary" id="scanBtn" onclick="analyzeText()">🔍 Analyze Content</button>
+            <button class="btn-clear" onclick="clearAll()">Clear</button>
+        </div>
+
+        <!-- ── RESULT AREA ── -->
+        <div id="result-area">
+            <div id="result-card" class="result-card">
+                <div class="result-header">
+                    <div class="result-icon" id="result-icon"></div>
+                    <div>
+                        <div class="result-title" id="result-title"></div>
+                        <div class="result-subtitle" id="result-subtitle"></div>
+                    </div>
                 </div>
-                <div class="progress-bg">
-                    <div id="progress-fill" class="progress-fill"></div>
+
+                <!-- Confidence Bar -->
+                <div class="confidence-section">
+                    <div class="conf-label">
+                        <span>Model Confidence</span>
+                        <span class="conf-value" id="conf-value">0%</span>
+                    </div>
+                    <div class="conf-bar">
+                        <div class="conf-fill" id="conf-fill"></div>
+                    </div>
+                </div>
+
+                <!-- XAI: Suspicious Words — FIXED: now actually displayed -->
+                <div id="xai-section" style="display:none;">
+                    <div class="xai-title">
+                        🧠 Why the model flagged this — suspicious keywords detected
+                    </div>
+                    <div class="word-chips" id="word-chips"></div>
+                </div>
+
+                <!-- URL Scan Results -->
+                <div id="url-section" style="display:none;"></div>
+
+                <!-- Active Learning Feedback -->
+                <div id="feedback-section">
+                    <div class="feedback-label">Was this prediction incorrect?</div>
+                    <button class="btn-feedback" id="feedbackBtn" onclick="sendFeedback()">
+                        🚩 Report Wrong Prediction
+                    </button>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div id="feedback-section">
-                <p class="feedback-text">Did the model make a mistake?</p>
-                <button id="feedbackBtn" class="btn-secondary" onclick="sendFeedback()">Report Incorrect
-                    Prediction</button>
+    <!-- How It Works -->
+    <div class="how-it-works">
+        <div class="step-card">
+            <div class="step-icon">🤖</div>
+            <div class="step-title">ML Classification</div>
+            <div class="step-desc">TF-IDF + Naive Bayes model trained on 5,500+ real SMS messages with 97%+ precision.
+            </div>
+        </div>
+        <div class="step-card">
+            <div class="step-icon">🧠</div>
+            <div class="step-title">Explainable AI</div>
+            <div class="step-desc">See exactly which words triggered the spam verdict using log-odds feature scoring.
+            </div>
+        </div>
+        <div class="step-card">
+            <div class="step-icon">🔗</div>
+            <div class="step-title">Link Scanner</div>
+            <div class="step-desc">Heuristic URL analysis detects IP routing, suspicious TLDs, and known URL shorteners.
             </div>
         </div>
     </div>
 
     <script>
+        const API = "http://localhost:8000";
         let currentText = "";
         let currentPrediction = "";
 
-        // Listen for the "Enter" key inside the text box
-        document.getElementById("emailText").addEventListener("keydown", function(event) {
-            // If they press Enter (but NOT Shift+Enter)
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault(); // Stop it from creating a new line
-                analyzeText(); // Trigger the scan function
-            }
+        document.getElementById("emailText").addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); analyzeText(); }
         });
+
+        function clearAll() {
+            document.getElementById("emailText").value = "";
+            document.getElementById("result-area").style.display = "none";
+            document.getElementById("conf-fill").style.width = "0%";
+        }
+
+        // Extract URLs from pasted text
+        function extractURLs(text) {
+            const urlRegex = /https?:\/\/[^\s"'<>)]+/g;
+            return [...new Set(text.match(urlRegex) || [])];
+        }
 
         async function analyzeText() {
             const textArea = document.getElementById("emailText");
             const btn = document.getElementById("scanBtn");
-            const resultBox = document.getElementById("result-box");
-            const feedbackSection = document.getElementById("feedback-section");
-
             currentText = textArea.value.trim();
             if (!currentText) return;
 
-            btn.innerText = "Analyzing..."; btn.disabled = true;
-            resultBox.style.display = "none"; feedbackSection.style.display = "none";
-            document.getElementById("progress-fill").style.width = "0%";
+            btn.textContent = "Analyzing...";
+            btn.disabled = true;
+            document.getElementById("result-area").style.display = "none";
 
             try {
-                const response = await fetch("http://localhost:8000/predict", {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: currentText })
-                });
-                const data = await response.json();
+                const urls = extractURLs(currentText);
 
-                resultBox.className = data.is_spam ? "is-spam" : "is-safe";
-                document.getElementById("result-title").innerText = data.is_spam ? "🚨 Malicious Content Detected" : "✅ Safe Content";
-                document.getElementById("confidence-score").innerText = `${data.confidence}%`;
+                // Run both requests in parallel
+                const [textRes, urlRes] = await Promise.all([
+                    fetch(`${API}/predict`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ text: currentText })
+                    }).then(r => r.json()),
 
-                resultBox.style.display = "block";
+                    urls.length > 0
+                        ? fetch(`${API}/scan-links`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ urls })
+                        }).then(r => r.json())
+                        : Promise.resolve({ is_safe: true, dangerous_links: [], total_scanned: 0 })
+                ]);
 
-                // Animate progress bar
-                setTimeout(() => {
-                    document.getElementById("progress-fill").style.width = `${data.confidence}%`;
-                }, 50);
-
-                currentPrediction = data.is_spam ? "spam" : "safe";
-
-                // Reset and show feedback
-                const fBtn = document.getElementById("feedbackBtn");
-                fBtn.innerText = "Report Incorrect Prediction";
-                fBtn.className = "btn-secondary";
-                fBtn.disabled = false;
-                feedbackSection.style.display = "block";
-
-            } catch (error) {
-                alert("Error connecting to server. Is FastAPI running on port 8000?");
+                renderResult(textRes, urlRes);
+            } catch (err) {
+                alert("Cannot connect to the FastAPI backend. Make sure it is running on port 8000.");
+                console.error(err);
             } finally {
-                btn.innerText = "Analyze Content"; btn.disabled = false;
+                btn.textContent = "🔍 Analyze Content";
+                btn.disabled = false;
             }
+        }
+
+        function renderResult(textData, urlData) {
+            const isSpam = textData.is_spam || !urlData.is_safe;
+            const card = document.getElementById("result-card");
+            const area = document.getElementById("result-area");
+            const icon = document.getElementById("result-icon");
+            const title = document.getElementById("result-title");
+            const subtitle = document.getElementById("result-subtitle");
+            const fill = document.getElementById("conf-fill");
+            const confVal = document.getElementById("conf-value");
+
+            card.className = `result-card ${isSpam ? "result-spam" : "result-safe"}`;
+
+            if (isSpam) {
+                icon.textContent = "🚨";
+                title.textContent = "Malicious Content Detected";
+                subtitle.textContent = !urlData.is_safe
+                    ? `${urlData.dangerous_count} dangerous link(s) found`
+                    : `${textData.original_suspicious_words?.length || 0} suspicious keyword(s) found`;
+                currentPrediction = "spam";
+            } else {
+                icon.textContent = "✅";
+                title.textContent = "Content Appears Safe";
+                subtitle.textContent = `Scanned text${urlData.total_scanned > 0 ? ` + ${urlData.total_scanned} link(s)` : ""}`;
+                currentPrediction = "safe";
+            }
+
+            confVal.textContent = `${textData.confidence}%`;
+            area.style.display = "block";
+            setTimeout(() => { fill.style.width = `${textData.confidence}%`; }, 50);
+
+            // ── XAI Words — now properly displayed ──
+            const xaiSection = document.getElementById("xai-section");
+            const wordChips = document.getElementById("word-chips");
+
+            if (isSpam && textData.original_suspicious_words?.length > 0) {
+                wordChips.innerHTML = textData.original_suspicious_words
+                    .map(w => `<span class="word-chip">${w}</span>`)
+                    .join("");
+                xaiSection.style.display = "block";
+            } else {
+                xaiSection.style.display = "none";
+            }
+
+            // ── URL Section ──
+            const urlSection = document.getElementById("url-section");
+            if (urlData.total_scanned > 0) {
+                if (!urlData.is_safe) {
+                    urlSection.className = "url-section url-danger";
+                    urlSection.innerHTML = `
+                    <div class="url-title">🔗 Dangerous Links Detected (${urlData.dangerous_count} / ${urlData.total_scanned})</div>
+                    ${urlData.dangerous_links.map(l => `
+                        <div class="url-item">
+                            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${l.url}</span>
+                            ${l.reasons.map(r => `<span class="url-reason">${r}</span>`).join("")}
+                        </div>
+                    `).join("")}
+                `;
+                } else {
+                    urlSection.className = "url-section url-safe";
+                    urlSection.innerHTML = `<div class="url-title">🔗 ${urlData.total_scanned} Link(s) Scanned — All Clear</div>`;
+                }
+                urlSection.style.display = "block";
+            } else {
+                urlSection.style.display = "none";
+            }
+
+            // Reset feedback button
+            const fBtn = document.getElementById("feedbackBtn");
+            fBtn.textContent = "🚩 Report Wrong Prediction";
+            fBtn.className = "btn-feedback";
+            fBtn.disabled = false;
         }
 
         async function sendFeedback() {
             const btn = document.getElementById("feedbackBtn");
-            btn.innerText = "Submitting..."; btn.disabled = true;
             const correctLabel = currentPrediction === "spam" ? "safe" : "spam";
+            btn.textContent = "Submitting...";
+            btn.disabled = true;
 
             try {
-                await fetch("http://localhost:8000/feedback", {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: currentText, predicted_label: currentPrediction, correct_label: correctLabel })
+                await fetch(`${API}/feedback`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        text: currentText,
+                        predicted_label: currentPrediction,
+                        correct_label: correctLabel
+                    })
                 });
-                btn.innerText = "✅ Logged for next Model Retraining";
-                btn.style.background = "#10B981"; btn.style.color = "white"; btn.style.borderColor = "#10B981";
-            } catch (error) {
-                btn.innerText = "Error submitting feedback";
+                btn.textContent = "✅ Logged for Model Retraining";
+                btn.className = "btn-feedback success";
+            } catch (err) {
+                btn.textContent = "Error — Try Again";
+                btn.disabled = false;
             }
         }
     </script>
